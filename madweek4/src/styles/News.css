@@ -1,0 +1,57 @@
+/* 뉴스 섹션 스타일 */
+.news-section {
+  width: 100%;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.news-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.loading-text {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+}
+
+.news-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.news-item {
+  width: calc(25% - 15px);
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.news-item:hover {
+  transform: translateY(-5px);
+}
+
+.news-item a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.news-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.news-text {
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4;
+}

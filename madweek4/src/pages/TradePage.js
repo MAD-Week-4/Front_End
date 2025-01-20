@@ -1,43 +1,40 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../components/Footer";
-import AiPerformance from "../components/AiPerformance";
 import OrderPanel from "../components/OrderPanel";
 import CandleStick from "../components/CandleStick";
 import RollingInfo from "../components/RollingInfo";
 import NewsTicker from "../components/NewsTicker";
 import StockList from "../components/StockList";
 
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 const TradePage = () => {
   const [stocks, setStocks] = useState([]); // API에서 가져온 주식 목록
   const [selectedStock, setSelectedStock] = useState(null);
-  const getCookie = (name) => {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-      const cookies = document.cookie.split(";");
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.startsWith(name + "=")) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    console.log(cookieValue);
-    return cookieValue;
-  };
-  
 
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/stocks/start-game/", {
+        const response = await fetch("http://localhost:8000/api/v1/stocks/start-game/", {
           method: "POST",
           credentials: "include",  // ✅ 세션 쿠키 포함
           headers: {
-            "Content-Type": "application/json",
             "X-CSRFToken": getCookie("csrftoken"), // JSON으로 요청
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({}), // API에 필요한 경우, 빈 객체라도 전송
         });
   
         if (!response.ok) {
@@ -45,6 +42,7 @@ const TradePage = () => {
         }
   
         const data = await response.json();
+        console.log(data.data);
         setStocks(data.data); // 전체 종목 리스트 저장
       } catch (error) {
         console.error("Error fetching stock data:", error);

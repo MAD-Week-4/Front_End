@@ -1,6 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 const LoginPage = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,10 +42,16 @@ const LoginPage = ({ setIsLoggedIn }) => {
 
     try {
       // ✅ form-data 형식으로 서버에 전송
-      const response = await fetch("http://127.0.0.1:8000/api/v1/auth/login/", {
+      console.log(getCookie("csrftoken"))
+      const response = await fetch("http://localhost:8000/api/v1/auth/login/", {
         method: "POST",
         body: formData, // ✅ FormData 객체 전달 (headers 설정 안함!)
         credentials: "include",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+
+        }
+
       });
 
       const data = await response.json();

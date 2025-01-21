@@ -5,6 +5,7 @@ import axios from "axios";
 const GameResultsCard = () => {
   const navigate = useNavigate();
   const [latestGameRecord, setLatestGameRecord] = useState(null);
+  const MAX_VISIBLE_LOGS = 2; // 표시할 최대 행 수
 
   useEffect(() => {
     // API 데이터 가져오기
@@ -27,13 +28,15 @@ const GameResultsCard = () => {
           const latestGame = filteredGameLogs[filteredGameLogs.length - 1];
           const formattedRecord = {
             date: new Date(latestGame.logs[0]?.date || "").toLocaleDateString(),
-            logs: latestGame.logs.map((log) => ({
-              date: new Date(log.date || "").toLocaleDateString(),
-              type: log.is_buy ? "매수" : "매도",
-              price: log.price,
-              quantity: log.quantity,
-              total: log.price * log.quantity,
-            })),
+            logs: latestGame.logs
+              .slice(0, MAX_VISIBLE_LOGS) // MAX_VISIBLE_LOGS만큼 자르기
+              .map((log) => ({
+                date: new Date(log.date || "").toLocaleDateString(),
+                type: log.is_buy ? "매수" : "매도",
+                price: log.price,
+                quantity: log.quantity,
+                total: log.price * log.quantity,
+              })),
           };
           setLatestGameRecord(formattedRecord);
         }

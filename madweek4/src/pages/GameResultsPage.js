@@ -12,10 +12,15 @@ const GameResultsPage = () => {
           withCredentials: true, // 인증 포함 (ex: 쿠키 인증)
         });
 
-        // 거래 내역이 있는 게임만 필터링 후 최신 순으로 정렬
         const filteredGames = response.data.trade_logs
-          .filter((game) => game.logs && game.logs.length > 0)
-          .sort((a, b) => b.game_id - a.game_id); // 최신 순 정렬 (game_id 내림차순)
+          .filter((game) => game.logs && game.logs.length > 0) // 거래 내역이 없는 게임은 제외
+          .map((game) => ({
+            ...game,
+            // 각 게임의 거래 내역을 created_at 기준으로 최신순 정렬
+            logs: game.logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
+          }))
+          // 게임 전체를 게임 ID 기준으로 내림차순 정렬
+          .sort((a, b) => b.game_id - a.game_id);
 
         // 상태 업데이트
         setGameTradeLogs(filteredGames);
@@ -36,8 +41,20 @@ const GameResultsPage = () => {
       ) : (
         gameTradeLogs.map((game) => (
           <div key={game.game_id} className="mb-8">
-            <h2 className="text-lg font-semibold mb-2">
-              게임 이름: {game.game_name} (시작일: {new Date(game.game_start_data).toLocaleDateString()})
+            {/* 게임 이름과 수익률 */}
+            <h2 className="text-lg font-semibold mb-2 flex items-center gap-4">
+              <span>게임 이름: {game.game_name}</span>
+              <span
+                className={`font-bold ${
+                  game.profit_rate >= 0 ? "text-red-500" : "text-blue-500"
+                }`}
+              >
+                {/* 수익률을 2번째 소수점 자리까지 반올림 */}
+                ({game.profit_rate >= 0 ? "+" : ""}{parseFloat(game.profit_rate).toFixed(2)}%)
+              </span>
+              <span className="text-sm text-gray-400">
+                (시작일: {new Date(game.game_start_data).toLocaleDateString()})
+              </span>
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full border border-gray-700 text-left">
@@ -53,7 +70,9 @@ const GameResultsPage = () => {
                 <tbody>
                   {game.logs.map((log, logIndex) => (
                     <tr key={logIndex} className="bg-gray-800 odd:bg-gray-700">
-                      <td className="p-3 border border-gray-700">{new Date(log.date).toLocaleDateString()}</td>
+                      <td className="p-3 border border-gray-700">
+                        {new Date(log.created_at).toLocaleDateString()}
+                      </td>
                       {/* 거래 유형 색상 변경: 매수(빨간색), 매도(파란색) */}
                       <td
                         className={`p-3 border border-gray-700 font-semibold ${
@@ -64,7 +83,9 @@ const GameResultsPage = () => {
                       </td>
                       <td className="p-3 border border-gray-700">{log.price.toLocaleString()}원</td>
                       <td className="p-3 border border-gray-700">{log.quantity.toLocaleString()}</td>
-                      <td className="p-3 border border-gray-700">{(log.price * log.quantity).toLocaleString()}원</td>
+                      <td className="p-3 border border-gray-700">
+                        {(log.price * log.quantity).toLocaleString()}원
+                      </td>
                     </tr>
                   ))}
                 </tbody>

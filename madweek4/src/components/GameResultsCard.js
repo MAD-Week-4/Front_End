@@ -1,48 +1,84 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const GameResultsCard = () => {
   const navigate = useNavigate();
+  const [latestGameRecord, setLatestGameRecord] = useState(null);
 
-  // 최근 게임 기록 (실제 데이터는 API 연동 필요)
-  const gameRecords = [
-    { date: "2025-01-15", userReturn: 12.5, aiReturn: 10.3 },
-    { date: "2025-01-14", userReturn: -2.3, aiReturn: 3.1 },
-    { date: "2025-01-13", userReturn: 7.8, aiReturn: 5.6 },
-  ];
+  useEffect(() => {
+    // API 데이터 가져오기
+    const fetchGameRecords = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/api/v1/stocks/trade-logs/",
+          {
+            withCredentials: true, // 쿠키 포함 설정
+          }
+        );
+
+        // 거래 내역이 있는 게임만 필터링
+        const filteredGameLogs = response.data.trade_logs.filter(
+          (game) => game.logs && game.logs.length > 0
+        );
+
+        // 가장 최신의 게임 기록 하나만 선택
+        if (filteredGameLogs.length > 0) {
+          const latestGame = filteredGameLogs[filteredGameLogs.length - 1];
+          const formattedRecord = {
+            date: new Date(latestGame.logs[0]?.date || "").toLocaleDateString(),
+            logs: latestGame.logs.map((log) => ({
+              date: new Date(log.date || "").toLocaleDateString(),
+              type: log.is_buy ? "매수" : "매도",
+              price: log.price,
+              quantity: log.quantity,
+              total: log.price * log.quantity,
+            })),
+          };
+          setLatestGameRecord(formattedRecord);
+        }
+      } catch (error) {
+        console.error("Failed to fetch game records:", error);
+      }
+    };
+
+    fetchGameRecords();
+  }, []);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md w-full">
-      <h3 className="text-lg font-semibold mb-2">최근 게임 결과</h3>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="text-gray-600">
-            <th className="p-2">날짜</th>
-            <th className="p-2">사용자</th>
-            <th className="p-2">AI</th>
-            <th className="p-2">승자</th>
-          </tr>
-        </thead>
-        <tbody>
-          {gameRecords.map((record, index) => {
-            const winner = record.userReturn > record.aiReturn ? "사용자" : "AI";
-            return (
-              <tr key={index} className="border-t text-center">
-                <td className="p-2">{record.date}</td>
-                <td className={`p-2 ${record.userReturn >= 0 ? "text-green-600" : "text-red-600"}`}>
-                  {record.userReturn}%
-                </td>
-                <td className={`p-2 ${record.aiReturn >= 0 ? "text-green-600" : "text-red-600"}`}>
-                  {record.aiReturn}%
-                </td>
-                <td className={`p-2 font-bold ${winner === "사용자" ? "text-blue-600" : "text-red-600"}`}>
-                  {winner}
-                </td>
+      <h3 className="text-lg font-semibold mb-4">최신 게임 거래 내역</h3>
+
+      {latestGameRecord ? (
+        <div>
+          <h4 className="text-md font-semibold mb-2">게임 날짜: {latestGameRecord.date}</h4>
+          <table className="w-full text-sm border border-gray-300">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 border border-gray-300">거래 날짜</th>
+                <th className="p-2 border border-gray-300">거래 유형</th>
+                <th className="p-2 border border-gray-300">거래 가격</th>
+                <th className="p-2 border border-gray-300">거래 수량</th>
+                <th className="p-2 border border-gray-300">총 거래 금액</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {latestGameRecord.logs.map((log, index) => (
+                <tr key={index} className="text-center">
+                  <td className="p-2 border border-gray-300">{log.date}</td>
+                  <td className="p-2 border border-gray-300">{log.type}</td>
+                  <td className="p-2 border border-gray-300">{log.price.toLocaleString()}원</td>
+                  <td className="p-2 border border-gray-300">{log.quantity.toLocaleString()}</td>
+                  <td className="p-2 border border-gray-300">{log.total.toLocaleString()}원</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-center text-gray-500">거래 내역이 없습니다.</p>
+      )}
+
       <button
         className="mt-3 w-full bg-blue-500 text-white py-1 rounded-lg"
         onClick={() => navigate("/result")}

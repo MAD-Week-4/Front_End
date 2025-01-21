@@ -24,6 +24,7 @@ function getCookie(name) {
 const TradePage = () => {
   const [stocks, setStocks] = useState([]); // API에서 가져온 주식 목록
   const [selectedStock, setSelectedStock] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [gameId, setGameId] = useState(null);
 
   useEffect(() => {
@@ -54,6 +55,11 @@ const TradePage = () => {
   
     fetchStockData();
   }, []);
+
+  const handleStockSelect = (stock , index) => {
+      setSelectedStock(stock);
+      setSelectedIndex(index);
+  }
   
   console.log(gameId);
   return (
@@ -64,12 +70,12 @@ const TradePage = () => {
           {/* 메인 영역 */}
           <section className="lg:w-3/4 bg-gray-800 p-4 rounded-lg">
             <CandleStick selectedStock={selectedStock} /> {/* 선택된 종목의 차트 표시 */}
-            <StockList stocks={stocks} onStockSelect={setSelectedStock} /> {/* StockList에서 클릭하면 차트 변경 */}
+            <StockList stocks={stocks} onStockSelect={handleStockSelect} /> {/* StockList에서 클릭하면 차트 변경 */}
           </section>
 
           {/* 사이드바 (주문 패널) */}
           <aside className="lg:w-1/4 bg-gray-800 p-4 rounded-lg">
-          {gameId ? <OrderPanel stock={selectedStock} gameId={gameId} /> : <p>게임 ID 로딩 중...</p>}
+          {gameId ? <OrderPanel stock={selectedStock} stockIndex = {selectedIndex} gameId={gameId}  /> : <p>게임 ID 로딩 중...</p>}
           </aside>
         </div>
       </main>

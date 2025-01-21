@@ -22,7 +22,7 @@ const StockList = ({ stocks, onStockSelect }) => {
             <tr
               key={idx}
               className="border-b border-gray-600 last:border-b-0 cursor-pointer hover:bg-gray-800"
-              onClick={() => onStockSelect(stock)} // 선택된 종목 설정
+              onClick={() => onStockSelect(stock, currentPage*stocksPerPage+idx)} // 선택된 종목 설정
             >
               <td className="p-2 font-bold">{stock.stock}</td>
               <td className="p-2 text-right">{stock.data[0].close_price.toLocaleString()}원</td>

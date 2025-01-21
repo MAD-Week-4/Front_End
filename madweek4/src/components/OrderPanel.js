@@ -15,8 +15,7 @@ function getCookie(name) {
   return cookieValue;
 }
 
-const OrderPanel = ({ stock, gameId }) => {
-  console.log(gameId);
+const OrderPanel = ({ stock, stockId ,gameId }) => {
   const [orderType, setOrderType] = useState("지정가"); // 주문 유형: 지정가 / 시장가
   const [tradeType, setTradeType] = useState("매수"); // 거래 유형: 매수 / 매도
   const [price, setPrice] = useState(stock ? stock.price : ""); // 종목 가격
@@ -28,12 +27,43 @@ const OrderPanel = ({ stock, gameId }) => {
 
   if (!stock) return <p className="text-gray-400">주문할 종목을 선택하세요.</p>;
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     if (!quantity || quantity <= 0) {
       alert("수량을 입력하세요.");
       return;
     }
-    alert(`${stock.name} ${tradeType} 주문 완료 (${quantity}주, ${totalCost.toLocaleString()}원)`);
+
+    if (tradeType === "매수") {
+      try {
+
+          const formData = new FormData();
+          formData.append("stock_id", stockId);
+          formData.append("quantity", quantity);
+
+        const response = await fetch(`http://localhost:8000/api/v1/stocks/${gameId}/buy/`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body:formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("주문 요청 실패");
+        }
+
+        const data = await response.json();
+        alert(`${stock.name} 매수 주문 완료 (${quantity}주, ${totalCost.toLocaleString()}원)`);
+        console.log("Order response:", data);
+      } catch (error) {
+        console.error("Error placing order:", error);
+        alert("주문 중 오류 발생");
+      }
+    } else {
+      alert("현재 매도 주문은 구현되지 않았습니다.");
+    }
   };
 
   const handleComplete = async () => {
@@ -42,7 +72,7 @@ const OrderPanel = ({ stock, gameId }) => {
       return;
     }
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/stocks/${gameId}/next-day/`, {
+      const response = await fetch(`http://localhost:8000/api/v1/stocks/${gameId}/next-day/`, {
         method: "POST",
         credentials: "include",
         headers: {

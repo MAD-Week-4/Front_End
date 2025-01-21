@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function getCookie(name) {
   var cookieValue = null;
@@ -15,25 +15,68 @@ function getCookie(name) {
   return cookieValue;
 }
 
-const OrderPanel = ({ stock, gameId }) => {
-  console.log(gameId);
-  const [orderType, setOrderType] = useState("지정가"); // 주문 유형: 지정가 / 시장가
-  const [tradeType, setTradeType] = useState("매수"); // 거래 유형: 매수 / 매도
-  const [price, setPrice] = useState(stock ? stock.price : ""); // 종목 가격
-  const [quantity, setQuantity] = useState(""); // 수량 입력
+const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital }) => {
+  console.log("OrderPanel received gameId:", gameId);
+  console.log("OrderPanel received stock:", stock);
+  console.log("OrderPanel received gameId:", gameId);
+  console.log("OrderPanel received capital:", capital); // ✅ 최신 예수금 값 확인
 
-  const balance = 100000000; // 예수금 (예시)
-  const maxBuyQuantity = stock ? Math.floor(balance / stock.price) : 0; // 매수 가능 수량
-  const totalCost = quantity * (price || 0); // 총 주문 금액
+
+  const [orderType, setOrderType] = useState("지정가");
+  const [tradeType, setTradeType] = useState("매수");
+  const [price, setPrice] = useState(stock ? stock.data?.[0]?.open_price : "");
+  const [quantity, setQuantity] = useState("");
+
+  const balance = capital ?? 0; // 예수금 (1억 원)
+  const effectivePrice = orderType === "시장가" ? stock?.data?.[0]?.close_price : price;
+  const maxBuyQuantity = effectivePrice ? Math.floor(balance / effectivePrice) : 0;
+
+  useEffect(() => {
+    if (orderType === "시장가") {
+      setPrice("");
+    }
+  }, [orderType]);
 
   if (!stock) return <p className="text-gray-400">주문할 종목을 선택하세요.</p>;
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     if (!quantity || quantity <= 0) {
       alert("수량을 입력하세요.");
       return;
     }
-    alert(`${stock.name} ${tradeType} 주문 완료 (${quantity}주, ${totalCost.toLocaleString()}원)`);
+    if (!stock.stock_id) {
+      alert("주식 ID를 찾을 수 없습니다.");
+      return;
+    }
+
+    const endpoint = tradeType === "매수"
+      ? `http://localhost:8000/api/v1/stocks/${gameId}/buy/`
+      : `http://localhost:8000/api/v1/stocks/${gameId}/sell/`;
+
+    const formData = new FormData();
+    formData.append("stock_id", stock.stock_id);
+    formData.append("quantity", quantity);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("주문 실패");
+      }
+
+      const data = await response.json();
+      alert(`주문 완료: ${data.message}`);
+    } catch (error) {
+      console.error("주문 오류:", error);
+      alert("주문 중 오류 발생");
+    }
   };
 
   const handleComplete = async () => {
@@ -41,8 +84,9 @@ const OrderPanel = ({ stock, gameId }) => {
       alert("게임 ID가 없습니다.");
       return;
     }
+
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/stocks/${gameId}/next-day/`, {
+      await fetch(`http://localhost:8000/api/v1/stocks/${gameId}/next-day/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -50,29 +94,27 @@ const OrderPanel = ({ stock, gameId }) => {
           "X-CSRFToken": getCookie("csrftoken"),
         },
       });
-      
-      if (!response.ok) {
-        throw new Error("서버 응답 실패");
-      }
-      
-      const data = await response.json();
+
       alert("다음 날로 이동되었습니다.");
-      console.log("Next day response:", data);
+
+      if (typeof updateStockData === "function") {
+        await updateStockData(); // ✅ 최신 주식 데이터 업데이트
+      }
+
+      if (typeof updateNetWorth === "function") {
+        await updateNetWorth(); // ✅ 최신 자산 데이터 업데이트
+      }
+
     } catch (error) {
-      console.error("Error moving to next day:", error);
-      alert("다음 날 이동 중 오류 발생");
+      console.error("완료 처리 중 오류:", error);
+      alert("완료 처리 중 오류 발생");
     }
   };
+
 
   return (
     <div className="bg-gray-700 p-4 rounded">
       <h3 className="text-xl font-bold mb-4">{stock.name} 주문</h3>
-
-      {/* 예수금 표시 */}
-      <div className="bg-gray-800 p-3 rounded mb-4">
-        <h4 className="text-md font-semibold mb-1">예수금</h4>
-        <p className="text-sm text-gray-300 font-bold">{balance.toLocaleString()}원</p>
-      </div>
 
       {/* 주문 유형 선택 */}
       <div className="mb-4">
@@ -100,7 +142,7 @@ const OrderPanel = ({ stock, gameId }) => {
         </select>
       </div>
 
-      {/* 가격 입력 (지정가일 때만 활성화) */}
+      {/* 가격 입력 */}
       <div className="mb-4">
         <label className="block mb-1 text-sm">가격</label>
         <div className="flex">
@@ -130,7 +172,9 @@ const OrderPanel = ({ stock, gameId }) => {
           <span className="bg-gray-700 border border-gray-600 border-l-0 rounded-r px-3 flex items-center">주</span>
         </div>
         {tradeType === "매수" && (
-          <p className="text-xs text-gray-400 mt-1">최대 매수 가능: {maxBuyQuantity.toLocaleString()}주</p>
+          <p className="text-xs text-gray-400 mt-1">
+            최대 매수 가능: {maxBuyQuantity.toLocaleString()}주 (잔고: {balance.toLocaleString()}원)
+          </p>
         )}
       </div>
 
@@ -143,8 +187,6 @@ const OrderPanel = ({ stock, gameId }) => {
       >
         {tradeType} 주문하기
       </button>
-
-      {/* 완료하기 버튼 */}
       <button
         className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white py-2 rounded"
         onClick={handleComplete}

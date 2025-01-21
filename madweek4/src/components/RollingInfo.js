@@ -13,10 +13,10 @@ const RollingInfo = () => {
   ];
 
   return (
-    <div className="relative z-50 bg-blue-800 text-white p-4">
+    <div className="fixed bottom-0 w-full bg-blue-800 text-white p-1 z-50">
       <Marquee gradient={false} speed={100} pauseOnHover={true}>
         {infoItems.map((item, index) => (
-          <span key={index} className="mx-10">{item}</span> 
+          <span key={index} className="mx-10 whitespace-nowrap">{item}</span> 
         ))}
       </Marquee>
     </div>

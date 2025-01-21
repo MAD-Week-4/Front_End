@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const CandleStick = ({ selectedStock }) => {
+  const [chartData, setChartData] = useState([]);
+
+  // ✅ selectedStock이 변경될 때마다 최신 데이터 반영
+  useEffect(() => {
+    if (selectedStock && selectedStock.data) {
+      setChartData(selectedStock.data);
+    }
+  }, [selectedStock]);
+
   if (!selectedStock) return <p className="text-gray-400">종목을 선택하세요.</p>;
 
-  const stockData = selectedStock.data;
-
-  // 캔들스틱 차트 데이터 변환
+  // ✅ 차트 데이터 변환 (가장 최신 데이터를 반영)
   const series = [
     {
-      data: stockData.map((price) => ({
+      data: chartData.map((price) => ({
         x: price.date,
         y: [price.open_price, price.upper_limit, price.lower_limit, price.close_price],
       })),
@@ -39,7 +46,7 @@ const CandleStick = ({ selectedStock }) => {
         show: true,
       },
       type: "datetime",
-      categories: stockData.map((item) => item.date),
+      categories: chartData.map((item) => item.date),
     },
     yaxis: {
       labels: {

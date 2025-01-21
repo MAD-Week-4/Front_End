@@ -6,7 +6,7 @@ const NewsTicker = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/news") // Django 백엔드 API 엔드포인트
+    fetch("http://localhost:8000/api/news") // Django 백엔드 API 엔드포인트
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -32,25 +32,15 @@ const NewsTicker = () => {
   return (
     <div className="news-ticker-container">
       <div className="news-ticker-wrapper">
-        {news.length > 0 ? (
-          <div
-            className="news-item fade-in"
-            key={currentIndex} // ✅ key 변경 시 애니메이션 적용
-            onClick={() => window.open(news[currentIndex]?.link, "_blank")}
-          >
-            <FaBullhorn className="news-icon" />
-            <span className="news-label">뉴스</span>
-            <span className="news-title">
-              {news[currentIndex]?.title.replace(/<b>|<\/b>/g, "")}
-            </span>
-          </div>
-        ) : (
-          <div className="news-item">
-            <FaBullhorn className="news-icon" />
-            <span className="news-label">뉴스</span>
-            <span className="news-title">📢 뉴스 데이터를 불러오는 중...</span>
-          </div>
-        )}
+        <div className="news-item fade-in" key={currentIndex}>
+          <FaBullhorn className="news-icon" /> {/* ✅ 확성기 아이콘 하나만 유지 */}
+          <span className="news-label"></span>
+          <span className="news-title">
+            {news.length > 0 
+              ? news[currentIndex]?.title.replace(/<b>|<\/b>/g, "") 
+              : "뉴스 데이터를 불러오는 중..."}
+          </span>
+        </div>
       </div>
     </div>
   );

@@ -17,8 +17,8 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
   };
 
   return (
-    <nav className="flex justify-between items-center px-8 py-4 bg-white shadow-md">
-      <div className="text-blue-600 font-bold text-lg">투자 플랫폼</div>
+    <nav className="flex justify-between items-center px-8 py-2 bg-white shadow-md">
+      <div className="text-blue-600 font-bold text-lg">MoTu</div>
       <button className="px-4 py-2 bg-black text-white rounded" onClick={handleButtonClick}>
         {isLoggedIn ? "로그아웃" : "로그인"}
       </button>

@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const StockList = ({ stocks, onStockSelect }) => {
+const StockList = ({ stocks = [], onStockSelect }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const stocksPerPage = 3; // 한 페이지당 3개만 표시
+
+  useEffect(() => {
+    setCurrentPage(0); // ✅ 데이터가 업데이트되면 첫 페이지로 이동
+  }, [stocks]);
 
   // 현재 페이지의 종목만 보여주기
   const paginatedStocks = stocks.slice(currentPage * stocksPerPage, (currentPage + 1) * stocksPerPage);
@@ -18,19 +22,31 @@ const StockList = ({ stocks, onStockSelect }) => {
           </tr>
         </thead>
         <tbody>
-          {paginatedStocks.map((stock, idx) => (
-            <tr
-              key={idx}
-              className="border-b border-gray-600 last:border-b-0 cursor-pointer hover:bg-gray-800"
-              onClick={() => onStockSelect(stock)} // 선택된 종목 설정
-            >
-              <td className="p-2 font-bold">{stock.stock}</td>
-              <td className="p-2 text-right">{stock.data[0].close_price.toLocaleString()}원</td>
-              <td className="p-2 text-right">
-                {(stock.data[0].close_price - stock.data[1].close_price).toFixed(2)}%
-              </td>
-            </tr>
-          ))}
+          {paginatedStocks.map((stock) => {
+            // ✅ 최신 날짜의 close_price 가져오기
+            const latestClosePrice = stock.data?.length > 0 ? stock.data[stock.data.length - 1].close_price : "N/A";
+
+            // ✅ 등락률 계산 (최신 close_price - 이전 close_price)
+            let changeRate = "N/A";
+            if (stock.data?.length > 1) {
+              const prevClosePrice = stock.data[stock.data.length - 2].close_price;
+              changeRate = ((latestClosePrice - prevClosePrice) / prevClosePrice * 100).toFixed(2) + "%";
+            }
+
+            return (
+              <tr
+                key={stock.stock_id} // ✅ stock_id를 고유 식별자로 사용
+                className="border-b border-gray-600 last:border-b-0 cursor-pointer hover:bg-gray-800"
+                onClick={() => onStockSelect(stock)} // 선택된 종목 설정
+              >
+                <td className="p-2 font-bold">{stock.stock}</td>
+                <td className="p-2 text-right">
+                  {latestClosePrice !== "N/A" ? latestClosePrice.toLocaleString() + "원" : "N/A"}
+                </td>
+                <td className="p-2 text-right">{changeRate}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 

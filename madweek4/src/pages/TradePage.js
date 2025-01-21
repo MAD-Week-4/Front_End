@@ -24,6 +24,7 @@ function getCookie(name) {
 const TradePage = () => {
   const [stocks, setStocks] = useState([]); // API에서 가져온 주식 목록
   const [selectedStock, setSelectedStock] = useState(null);
+  const [gameId, setGameId] = useState(null);
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -44,6 +45,8 @@ const TradePage = () => {
         const data = await response.json();
         console.log(data.data);
         setStocks(data.data); // 전체 종목 리스트 저장
+        setGameId(data.game_id);
+        console.log(gameId);
       } catch (error) {
         console.error("Error fetching stock data:", error);
       }
@@ -52,8 +55,7 @@ const TradePage = () => {
     fetchStockData();
   }, []);
   
-  
-
+  console.log(gameId);
   return (
     <div className="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
       <NewsTicker />
@@ -67,7 +69,7 @@ const TradePage = () => {
 
           {/* 사이드바 (주문 패널) */}
           <aside className="lg:w-1/4 bg-gray-800 p-4 rounded-lg">
-            <OrderPanel stock={selectedStock} />
+          {gameId ? <OrderPanel stock={selectedStock} gameId={gameId} /> : <p>게임 ID 로딩 중...</p>}
           </aside>
         </div>
       </main>

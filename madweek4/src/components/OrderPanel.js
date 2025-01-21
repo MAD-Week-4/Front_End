@@ -1,6 +1,22 @@
 import React, { useState } from "react";
 
-const OrderPanel = ({ stock }) => {
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
+const OrderPanel = ({ stock, gameId }) => {
+  console.log(gameId);
   const [orderType, setOrderType] = useState("지정가"); // 주문 유형: 지정가 / 시장가
   const [tradeType, setTradeType] = useState("매수"); // 거래 유형: 매수 / 매도
   const [price, setPrice] = useState(stock ? stock.price : ""); // 종목 가격
@@ -18,6 +34,34 @@ const OrderPanel = ({ stock }) => {
       return;
     }
     alert(`${stock.name} ${tradeType} 주문 완료 (${quantity}주, ${totalCost.toLocaleString()}원)`);
+  };
+
+  const handleComplete = async () => {
+    if (!gameId) {
+      alert("게임 ID가 없습니다.");
+      return;
+    }
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/stocks/${gameId}/next-day/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error("서버 응답 실패");
+      }
+      
+      const data = await response.json();
+      alert("다음 날로 이동되었습니다.");
+      console.log("Next day response:", data);
+    } catch (error) {
+      console.error("Error moving to next day:", error);
+      alert("다음 날 이동 중 오류 발생");
+    }
   };
 
   return (
@@ -90,20 +134,22 @@ const OrderPanel = ({ stock }) => {
         )}
       </div>
 
-      {/* 총 주문 금액 */}
-      <div className="bg-gray-800 p-3 rounded mb-4">
-        <h4 className="text-md font-semibold mb-1">총 주문 금액</h4>
-        <p className="text-sm text-gray-300 font-bold">{totalCost.toLocaleString()}원</p>
-      </div>
-
       {/* 주문 버튼 */}
       <button
         onClick={handleOrder}
         className={`w-full text-white py-2 rounded ${
-          tradeType === "매수" ? "bg-blue-600 hover:bg-blue-700" : "bg-red-600 hover:bg-red-700"
+          tradeType === "매수" ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
         }`}
       >
         {tradeType} 주문하기
+      </button>
+
+      {/* 완료하기 버튼 */}
+      <button
+        className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white py-2 rounded"
+        onClick={handleComplete}
+      >
+        완료하기
       </button>
     </div>
   );

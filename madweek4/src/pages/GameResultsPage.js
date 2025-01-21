@@ -45,26 +45,26 @@ const GameResultsPage = () => {
             <h2 className="text-lg font-semibold mb-2 flex items-center gap-4">
               <span>게임 이름: {game.game_name}</span>
               <span
-                className={`font-bold ${
-                  game.profit_rate >= 0 ? "text-red-500" : "text-blue-500"
-                }`}
+                  className={`font-bold ${
+                      game.profit_rate >= 0 ? "text-red-500" : "text-blue-500"
+                  }`}
               >
-                {/* 수익률을 2번째 소수점 자리까지 반올림 */}
                 ({game.profit_rate >= 0 ? "+" : ""}{parseFloat(game.profit_rate).toFixed(2)}%)
               </span>
               <span className="text-sm text-gray-400">
                 (시작일: {new Date(game.game_start_data).toLocaleDateString()})
               </span>
+              <span className="text-xs text-gray-400">(ID: {game.game_id})</span> {/* 게임 ID 추가 */}
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full border border-gray-700 text-left">
                 <thead className="bg-gray-800">
-                  <tr>
-                    <th className="p-3 border border-gray-700">거래 날짜</th>
-                    <th className="p-3 border border-gray-700">거래 유형</th>
-                    <th className="p-3 border border-gray-700">거래 가격</th>
-                    <th className="p-3 border border-gray-700">거래 수량</th>
-                    <th className="p-3 border border-gray-700">총 거래 금액</th>
+                <tr>
+                  <th className="p-3 border border-gray-700">거래 날짜</th>
+                  <th className="p-3 border border-gray-700">거래 유형</th>
+                  <th className="p-3 border border-gray-700">거래 가격</th>
+                  <th className="p-3 border border-gray-700">거래 수량</th>
+                  <th className="p-3 border border-gray-700">총 거래 금액</th>
                   </tr>
                 </thead>
                 <tbody>

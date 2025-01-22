@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Footer from "../components/Footer";
 import OrderPanel from "../components/OrderPanel";
 import CandleStick from "../components/CandleStick";
 import RollingInfo from "../components/RollingInfo";

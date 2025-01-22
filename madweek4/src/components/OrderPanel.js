@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 function getCookie(name) {
   var cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -26,6 +26,8 @@ const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital })
   const [tradeType, setTradeType] = useState("매수");
   const [price, setPrice] = useState(stock ? stock.data?.[0]?.open_price : "");
   const [quantity, setQuantity] = useState("");
+  const [dayCount, setDayCount] = useState(1);
+  const navigate = useNavigate();
 
   const balance = capital ?? 0; // 예수금 (1억 원)
   const effectivePrice = orderType === "시장가" ? stock?.data?.[0]?.close_price : price;
@@ -48,6 +50,7 @@ const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital })
       alert("주식 ID를 찾을 수 없습니다.");
       return;
     }
+
 
     const endpoint = tradeType === "매수"
       ? `http://localhost:8000/api/v1/stocks/${gameId}/buy/`
@@ -85,6 +88,17 @@ const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital })
       return;
     }
 
+    setDayCount(prev => {
+      const updatedDayCount = prev + 1;
+      if (updatedDayCount >= 10) {
+        alert("게임이 종료되었습니다. 결과 페이지로 이동합니다.");
+        navigate("/end");
+        return prev; 
+      }
+      alert(`${prev}일차 -> ${updatedDayCount}일차로 이동되었습니다.`);
+      return updatedDayCount;
+    });
+
     try {
       await fetch(`http://localhost:8000/api/v1/stocks/${gameId}/next-day/`, {
         method: "POST",
@@ -95,7 +109,7 @@ const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital })
         },
       });
 
-      alert("다음 날로 이동되었습니다.");
+
 
       if (typeof updateStockData === "function") {
         await updateStockData(); // ✅ 최신 주식 데이터 업데이트

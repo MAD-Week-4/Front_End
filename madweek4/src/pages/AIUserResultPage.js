@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const GameResultsPage = () => {
+const AIUserResultPage = () => {
   const [gameTradeLogs, setGameTradeLogs] = useState([]);
 
   useEffect(() => {
     // API 호출: 게임별 거래 내역 가져오기
     const fetchGameTradeLogs = async () => {
       try {
-        const aiResponse = await axios.get("http://localhost:8000/api/v1/stocks/trade-logs/", {
+        const aiResponse = await axios.get("http://localhost:8000/api/v1/stocks/ai-trade-logs/", {
             withCredentials: true,
         })
 
@@ -31,7 +31,7 @@ const GameResultsPage = () => {
 
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
-      <h1 className="text-2xl font-bold mb-4">사용자 거래 내역</h1>
+      <h1 className="text-2xl font-bold mb-4">AI 거래 내역</h1>
 
       {gameTradeLogs.length === 0 ? (
         <p className="text-center text-gray-400">거래 내역이 없습니다.</p>
@@ -49,7 +49,7 @@ const GameResultsPage = () => {
                 ({game.ai_profit_rate >= 0 ? "+" : ""}{parseFloat(game.ai_profit_rate).toFixed(2)}%)
               </span>
               <span className="text-sm text-gray-400">
-                (시작일: {new Date(game.game_start_data).toLocaleDateString()})
+                (시작일: {new Date(game.game_start_date).toLocaleDateString()})
               </span>
               <span className="text-xs text-gray-400">(ID: {game.game_id})</span> {/* 게임 ID 추가 */}
             </h2>
@@ -105,4 +105,4 @@ const GameResultsPage = () => {
   );
 };
 
-export default GameResultsPage;
+export default AIUserResultPage;

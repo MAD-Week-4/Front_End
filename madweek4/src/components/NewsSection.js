@@ -3,6 +3,7 @@ import axios from "axios";
 
 const NewsSection = () => {
   const [news, setNews] = useState([]);
+  const defaultImage = "/assets/images/not image.png";
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -30,7 +31,7 @@ const NewsSection = () => {
             className="block bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition"
           >
             <img 
-              src={item.image} 
+              src={item.image || defaultImage} 
               alt={item.title} 
               className="w-full h-40 object-cover rounded-md mb-4"
             />

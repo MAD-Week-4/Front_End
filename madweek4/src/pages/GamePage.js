@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const GameResultsPage = () => {
+const GamePage = () => {
   const [gameTradeLogs, setGameTradeLogs] = useState([]);
 
   useEffect(() => {
     // API 호출: 게임별 거래 내역 가져오기
     const fetchGameTradeLogs = async () => {
       try {
-        const aiResponse = await axios.get("http://localhost:8000/api/v1/stocks/trade-logs/", {
-            withCredentials: true,
-        })
+        const response = await axios.get("http://localhost:8000/api/v1/stocks/trade-logs/", {
+          withCredentials: true, // 인증 포함 (ex: 쿠키 인증)
+        });
 
-        const aiFilteredGames = aiResponse.data.ai_trade_logs
-            .filter((game) => game.logs && game.logs.length > 0)
-            .map((game) => ({
-              ...game,
-              logs: game.logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
-        })).sort((a, b) => b.game_id - a.game_id).slice(0, 1);
+        const filteredGames = response.data.trade_logs
+          .filter((game) => game.logs && game.logs.length > 0) // 거래 내역이 없는 게임은 제외
+          .map((game) => ({
+            ...game,
+            // 각 게임의 거래 내역을 created_at 기준으로 최신순 정렬
+            logs: game.logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
+          }))
+          // 게임 전체를 게임 ID 기준으로 내림차순 정렬
+          .sort((a, b) => b.game_id - a.game_id);
 
         // 상태 업데이트
-        setGameTradeLogs(aiFilteredGames);
+        setGameTradeLogs(filteredGames);
       } catch (error) {
         console.error("Failed to fetch trade logs:", error);
       }
@@ -31,7 +34,7 @@ const GameResultsPage = () => {
 
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
-      <h1 className="text-2xl font-bold mb-4">사용자 거래 내역</h1>
+      <h1 className="text-2xl font-bold mb-4">유저 게임별 거래 내역</h1>
 
       {gameTradeLogs.length === 0 ? (
         <p className="text-center text-gray-400">거래 내역이 없습니다.</p>
@@ -43,10 +46,10 @@ const GameResultsPage = () => {
               <span>게임 이름: {game.game_name}</span>
               <span
                   className={`font-bold ${
-                      game.ai_profit_rate >= 0 ? "text-red-500" : "text-blue-500"
+                      game.profit_rate >= 0 ? "text-red-500" : "text-blue-500"
                   }`}
               >
-                ({game.ai_profit_rate >= 0 ? "+" : ""}{parseFloat(game.ai_profit_rate).toFixed(2)}%)
+                ({game.profit_rate >= 0 ? "+" : ""}{parseFloat(game.profit_rate).toFixed(2)}%)
               </span>
               <span className="text-sm text-gray-400">
                 (시작일: {new Date(game.game_start_data).toLocaleDateString()})
@@ -94,7 +97,7 @@ const GameResultsPage = () => {
                           {log.profit.toFixed(2)}%
                       </td>
                     </tr>
-                ))}
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -105,4 +108,4 @@ const GameResultsPage = () => {
   );
 };
 
-export default GameResultsPage;
+export default GamePage;

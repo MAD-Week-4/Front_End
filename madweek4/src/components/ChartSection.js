@@ -43,7 +43,7 @@ const ChartSection = () => {
   }, []);
 
   return (
-    <div className="py-16 px-8 bg-white">
+    <div className="py-16 px-8 bg-black text-white">
       <h2 className="text-2xl font-bold text-center mb-6">실시간 차트</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -52,7 +52,7 @@ const ChartSection = () => {
 
         {/* 첫 번째 차트 유지 */}
         <div className="p-4 border rounded-lg shadow-md bg-gray-50">
-          <h3 className="text-lg font-semibold">첫 번째 차트</h3>
+          <h3 className="text-lg text-black font-semibold">첫 번째 차트</h3>
           {/* 가상 데이터 (기존 chartData 첫 번째 데이터 사용) */}
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={Array.from({ length: 10 }, (_, i) => ({ name: `Day ${i + 1}`, value: Math.random() * 100 }))}>
@@ -67,7 +67,7 @@ const ChartSection = () => {
 
         {/* 🟢 두 번째 차트: 게임 ID 별 수익률 BarChart */}
         <div className="p-4 border rounded-lg shadow-md bg-gray-50">
-          <h3 className="text-lg font-semibold">게임 ID 별 수익률</h3>
+          <h3 className="text-lg text-black font-semibold">게임 ID 별 수익률</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={gameProfitData}>
               <CartesianGrid strokeDasharray="3 3" />

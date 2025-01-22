@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <header className="header">
       <h1>대한민국 투자의 미래를 응원합니다</h1>
-      <p>가능성을 보는 투자 전략</p>
+      <p>가능성을 보는 모의투자</p>
       <button className="start-button" onClick={handleClick}>
         시작하기
       </button>

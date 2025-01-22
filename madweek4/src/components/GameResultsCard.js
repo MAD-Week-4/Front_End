@@ -50,7 +50,7 @@ const GameResultsCard = () => {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md w-full">
-      <h3 className="text-lg font-semibold mb-4">최신 게임 거래 내역</h3>
+      <h3 className="text-lg text-black font-semibold mb-4">최신 게임 거래 내역</h3>
 
       {latestGameRecord ? (
         <div>

@@ -161,7 +161,7 @@ const ChartSection = () => {
                 height={300}
                 margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
                 padding={{ top: 0, right: 0, bottom: 0, left: 0 }} >
-              <ComposedChart data={mergedData} margin={{ top: 20, right: 40, bottom: 20, left: 0 }}>
+              <ComposedChart data={mergedData} margin={{ top: 20, right: 50, bottom: 20, left: 0 }}>
                 <CartesianGrid stroke="white" strokeDasharray="3 3" strokeOpacity={0.5}/>
                 <XAxis stroke="white" dataKey="id"/>
                 <YAxis stroke="white"/>
@@ -183,7 +183,10 @@ const ChartSection = () => {
                       }}
                 />
 
-                <Legend verticalAlign="top" height={36} wrapperStyle={{ textAlign: "center" }}/>
+                <Legend
+                    verticalAlign="top"
+                    height={36}
+                />
 
                 <Line
                     type="linear"

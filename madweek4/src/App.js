@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import TradePage from "./pages/TradePage";
 import LoginPage from "./pages/LoginPage";
 import GameResultsPage from "./pages/GameResultsPage";
+import AIUserResultPage from "./pages/AIUserResultPage";
 
 function App() {
   // 로그인 상태를 전역으로 관리하기 위해 App에서 useState로 상태 선언
@@ -19,7 +20,7 @@ function App() {
         <Route path="/trade" element={<TradePage />} />
         {/* LoginPage에도 setIsLoggedIn 전달 */}
         <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/result" element={<GameResultsPage />} />
+        <Route path="/result" element={<AIUserResultPage />} />
       </Routes>
     </>
   );

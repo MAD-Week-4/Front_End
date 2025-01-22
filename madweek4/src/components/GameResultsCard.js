@@ -5,7 +5,7 @@ import axios from "axios";
 const GameResultsCard = () => {
   const navigate = useNavigate();
   const [latestGameRecord, setLatestGameRecord] = useState(null);
-  const MAX_VISIBLE_LOGS = 2; // 표시할 최대 행 수
+  const MAX_VISIBLE_LOGS = 4; // 표시할 최대 행 수
 
   useEffect(() => {
     // API 데이터 가져오기
@@ -57,7 +57,7 @@ const GameResultsCard = () => {
         <div>
           <h4 className="text-md font-semibold mb-2">게임 날짜: {latestGameRecord.date}</h4>
           <table className="w-full text-sm border border-gray-300">
-            <thead className="bg-gray-100">
+            <thead className="bg-gray-800">
               <tr>
                 <th className="p-2 border text-white border-gray-300">거래 날짜</th>
                 <th className="p-2 border text-white border-gray-300">거래 유형</th>

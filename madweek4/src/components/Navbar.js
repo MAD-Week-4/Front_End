@@ -18,7 +18,10 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
 
   return (
     <nav className="flex justify-between items-center px-8 py-2 bg-black shadow-md">
-      <div className="text-blue-600 font-bold text-lg">MoTu</div>
+      <div className="text-blue-400 font-bold text-lg"
+           style={{ cursor: "pointer" }}
+           onClick={() => navigate("/")}
+      >MoTu</div>
       <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleButtonClick}>
         {isLoggedIn ? "로그아웃" : "로그인"}
       </button>

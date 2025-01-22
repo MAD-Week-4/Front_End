@@ -72,23 +72,25 @@ const ChartSection = () => {
         }});
       mergedData.sort((a, b) => a.id - b.id);
 
-        const latestGame = response.data.trade_logs.reduce((prev, current) =>
-            current.game_id > (prev?.game_id || 0) ? current : prev, null);
+        const latestGame = response.data.trade_logs
+          .filter((game) => game.logs && game.logs.length > 0) // 로그가 있는 데이터만 필터링
+          .reduce((prev, current) =>
+            current.game_id > (prev?.game_id || 0) ? current : prev, null); // 가장 최신 게임 추출
 
-      if (latestGame && latestGame.logs.length > 0) {
-        const formattedLatestGame = latestGame.logs.map((log) => ({
-          date: new Date(log.date).toLocaleDateString("en-US",{
-            month: "2-digit",
-            day: "2-digit",
-            hour12: false,
-          }),
-          profit: parseFloat(log.profit.toFixed(2)), // 수익률 정리
-        }));
-        setLatestGameData(formattedLatestGame);
-      } else {
-        console.warn("최신 게임의 로그 데이터가 없거나 비어 있습니다.");
-        setLatestGameData([]);
-      }
+        if (latestGame) {
+          const formattedLatestGame = latestGame.logs.map((log) => ({
+            date: new Date(log.date).toLocaleDateString("en-US", {
+              month: "2-digit",
+              day: "2-digit",
+              hour12: false,
+            }),
+            profit: parseFloat(log.profit.toFixed(2)), // 수익률 정리
+          }));
+          setLatestGameData(formattedLatestGame);
+        } else {
+          console.warn("데이터에 로그가 있는 게임이 없습니다.");
+          setLatestGameData([]); // 기본 빈 데이터 설정
+        }
 
         console.log(latestGameData);
 

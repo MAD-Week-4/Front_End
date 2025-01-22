@@ -51,8 +51,8 @@ const ChartSection = () => {
         <GameResultsCard />
 
         {/* 첫 번째 차트 유지 */}
-        <div className="p-4 border rounded-lg shadow-md bg-gray-50">
-          <h3 className="text-lg text-black font-semibold">첫 번째 차트</h3>
+        <div className="p-4 border border-black rounded-lg shadow-md bg-gray-800">
+          <h3 className="text-lg text-white font-semibold">첫 번째 차트</h3>
           {/* 가상 데이터 (기존 chartData 첫 번째 데이터 사용) */}
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={Array.from({ length: 10 }, (_, i) => ({ name: `Day ${i + 1}`, value: Math.random() * 100 }))}>
@@ -66,8 +66,8 @@ const ChartSection = () => {
         </div>
 
         {/* 🟢 두 번째 차트: 게임 ID 별 수익률 BarChart */}
-        <div className="p-4 border rounded-lg shadow-md bg-gray-50">
-          <h3 className="text-lg text-black font-semibold">게임 ID 별 수익률</h3>
+        <div className="p-4 border border-black rounded-lg shadow-md bg-gray-800">
+          <h3 className="text-lg text-white font-semibold">게임 ID 별 수익률</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={gameProfitData}>
               <CartesianGrid strokeDasharray="3 3" />

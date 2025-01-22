@@ -49,8 +49,8 @@ const GameResultsCard = () => {
   }, []);
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md w-full">
-      <h3 className="text-lg text-black font-semibold mb-4">최신 게임 거래 내역</h3>
+    <div className="bg-gray-800 p-4 rounded-lg shadow-md w-full">
+      <h3 className="text-lg text-white font-semibold mb-4">최신 게임 거래 내역</h3>
       
 
       {latestGameRecord ? (
@@ -59,28 +59,28 @@ const GameResultsCard = () => {
           <table className="w-full text-sm border border-gray-300">
             <thead className="bg-gray-100">
               <tr>
-                <th className="p-2 border border-gray-300">거래 날짜</th>
-                <th className="p-2 border border-gray-300">거래 유형</th>
-                <th className="p-2 border border-gray-300">거래 가격</th>
-                <th className="p-2 border border-gray-300">거래 수량</th>
-                <th className="p-2 border border-gray-300">총 거래 금액</th>
+                <th className="p-2 border text-white border-gray-300">거래 날짜</th>
+                <th className="p-2 border text-white border-gray-300">거래 유형</th>
+                <th className="p-2 border text-white border-gray-300">거래 가격</th>
+                <th className="p-2 border text-white border-gray-300">거래 수량</th>
+                <th className="p-2 border text-white border-gray-300">총 거래 금액</th>
               </tr>
             </thead>
             <tbody>
               {latestGameRecord.logs.map((log, index) => (
                 <tr key={index} className="text-center">
-                  <td className="p-2 border border-gray-300">{log.date}</td>
-                  <td className="p-2 border border-gray-300">{log.type}</td>
-                  <td className="p-2 border border-gray-300">{log.price.toLocaleString()}원</td>
-                  <td className="p-2 border border-gray-300">{log.quantity.toLocaleString()}</td>
-                  <td className="p-2 border border-gray-300">{log.total.toLocaleString()}원</td>
+                  <td className="p-2 border text-white border-gray-300">{log.date}</td>
+                  <td className="p-2 border text-white border-gray-300">{log.type}</td>
+                  <td className="p-2 border text-white border-gray-300">{log.price.toLocaleString()}원</td>
+                  <td className="p-2 border text-white border-gray-300">{log.quantity.toLocaleString()}</td>
+                  <td className="p-2 border text-white border-gray-300">{log.total.toLocaleString()}원</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <p className="text-center text-gray-500">거래 내역이 없습니다.</p>
+        <p className="text-center text-white">거래 내역이 없습니다.</p>
       )}
 
       <button

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import GameResultsPage from "./GameResultsPage";
 import AIUserResultPage from "./AIUserResultPage";
+import { useNavigate } from "react-router-dom";
 
 const TabContainer = styled.div`
   width: 100%;
@@ -51,11 +52,21 @@ const TabContent = styled.div`
 
 const Tab = () => {
   const [currentTab, setCurrentTab] = useState(0);
+  const navigate = useNavigate();
 
   const menu = [
     { name: "Game Results", component: <GameResultsPage /> },
     { name: "AI User Results", component: <AIUserResultPage /> },
   ];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log("⏳ 10초 경과, 홈으로 이동합니다...");
+      navigate("/"); // ✅ '/'으로 이동
+    }, 10000); // 10초 후 실행
+
+    return () => clearTimeout(timer); // ✅ 컴포넌트가 언마운트되면 타이머 정리
+  }, []);
 
   return (
     <TabContainer>

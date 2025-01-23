@@ -3,7 +3,7 @@ import axios from "axios";
 
 const NewsSection = () => {
   const [news, setNews] = useState([]);
-  const defaultImage = "/assets/images/not image.png";
+  const defaultImage = "../assets/images/not image.png";
 
   useEffect(() => {
     const fetchNews = async () => {

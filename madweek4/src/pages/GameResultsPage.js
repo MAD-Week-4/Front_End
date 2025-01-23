@@ -6,13 +6,14 @@ const GameResultsPage = () => {
 
   useEffect(() => {
     // API 호출: 게임별 거래 내역 가져오기
-    const fetchGameTradeLogs = async () => {
+    const fetchGameUserTradeLogs = async () => {
       try {
-        const aiResponse = await axios.get("http://localhost:8000/api/v1/stocks/trade-logs/", {
+        const userResponse = await axios.get("http://localhost:8000/api/v1/stocks/trade-logs/", {
             withCredentials: true,
         })
+        console.log("✅ API Response:", userResponse.data);
 
-        const aiFilteredGames = aiResponse.data.ai_trade_logs
+        const userFilteredGames = userResponse.data.trade_logs
             .filter((game) => game.logs && game.logs.length > 0)
             .map((game) => ({
               ...game,
@@ -20,13 +21,13 @@ const GameResultsPage = () => {
         })).sort((a, b) => b.game_id - a.game_id).slice(0, 1);
 
         // 상태 업데이트
-        setGameTradeLogs(aiFilteredGames);
+        setGameTradeLogs(userFilteredGames);
       } catch (error) {
         console.error("Failed to fetch trade logs:", error);
       }
     };
 
-    fetchGameTradeLogs();
+    fetchGameUserTradeLogs();
   }, []);
 
   return (
@@ -46,7 +47,7 @@ const GameResultsPage = () => {
                       game.ai_profit_rate >= 0 ? "text-red-500" : "text-blue-500"
                   }`}
               >
-                ({game.ai_profit_rate >= 0 ? "+" : ""}{parseFloat(game.ai_profit_rate).toFixed(2)}%)
+                ({game.ai_profit_rate >= 0 ? "+" : ""}{parseFloat(game.profit_rate).toFixed(2)}%)
               </span>
               <span className="text-sm text-gray-400">
                 (시작일: {new Date(game.game_start_data).toLocaleDateString()})

@@ -56,9 +56,8 @@ const ChartSection = () => {
           {/* 가상 데이터 (기존 chartData 첫 번째 데이터 사용) */}
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={Array.from({ length: 10 }, (_, i) => ({ name: `Day ${i + 1}`, value: Math.random() * 100 }))}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis stroke="white" dataKey="name" />
+              <YAxis stroke="white"/>
               <Tooltip />
               <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
             </LineChart>
@@ -70,9 +69,9 @@ const ChartSection = () => {
           <h3 className="text-lg text-white font-semibold">게임 ID 별 수익률</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={gameProfitData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="id" /> {/* 게임 ID를 X축의 키로 사용 */}
-              <YAxis />
+              <CartesianGrid stroke="white" strokeDasharray="3 3" />
+              <XAxis stroke="white" dataKey="id" /> {/* 게임 ID를 X축의 키로 사용 */}
+              <YAxis stroke="white"/>
               <Tooltip />
               <Bar dataKey="profit" fill="#82ca9d" />
             </BarChart>

@@ -56,8 +56,8 @@ const GameResultsCard = () => {
       {latestGameRecord ? (
         <div>
           <h4 className="text-md font-semibold mb-2">게임 날짜: {latestGameRecord.date}</h4>
-          <table className="w-full text-sm border border-gray-300">
-            <thead className="bg-gray-100">
+          <table className="w-full text-sm border border-gray-800">
+            <thead className="bg-gray-800">
               <tr>
                 <th className="p-2 border text-white border-gray-300">거래 날짜</th>
                 <th className="p-2 border text-white border-gray-300">거래 유형</th>

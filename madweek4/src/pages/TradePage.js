@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import OrderPanel from "../components/OrderPanel";
 import CandleStick from "../components/CandleStick";
 import RollingInfo from "../components/RollingInfo";
 import NewsTicker from "../components/NewsTicker";
 import StockList from "../components/StockList";
+import MyStocks from "../components/MyStocks";
 
 function getCookie(name) {
     var cookieValue = null;
@@ -28,6 +29,7 @@ const TradePage = () => {
   const [capital, setCapital] = useState(0); // 예수금
   const [stockValue, setStockValue] = useState(0); // 주식 가치
   const [netWorth, setNetWorth] = useState(0); // 총 자산
+  const [userHoldings, setUserHoldings] = useState([]);
 
   // ✅ 최신 주식 데이터 가져오는 함수
   const fetchStockData = async () => {
@@ -58,6 +60,46 @@ const TradePage = () => {
       console.error("Stock data fetch error:", error);
     }
   };
+  const fetchUserStockData = useCallback(async () => {
+    try {
+      if (!gameId) {
+        console.warn("⚠ gameId가 없어서 API 요청을 하지 않습니다.");
+        return;
+      }
+  
+      console.log(`🚀 서버 요청 시작: /api/v1/stocks/${gameId}/user-stock-data/`);
+  
+      const response = await fetch(`http://localhost:8000/api/v1/stocks/${gameId}/user-stock-data/`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+      });
+  
+      console.log("📡 서버 응답 상태:", response.status);
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`사용자 보유 주식 데이터 가져오기 실패: ${errorText}`);
+      }
+  
+      const data = await response.json();
+      console.log("✅ 보유 주식 정보 (서버 응답):", data);
+  
+      setUserHoldings([...data.holdings]); // ✅ React가 변경을 감지하도록 새로운 배열 생성
+  
+    } catch (error) {
+      console.error("❌ User stock data fetch error:", error);
+    }
+  }, [gameId]);
+  
+
+  // ✅ `fetchUserStockData`를 `useEffect`에서 실행
+  useEffect(() => {
+    if (!gameId) return;
+    fetchUserStockData();
+  }, [gameId]);
 
   // ✅ 최신 자산 데이터 가져오는 함수
   const fetchNetWorth = async () => {
@@ -148,7 +190,8 @@ const TradePage = () => {
                   gameId={gameId} 
                   updateStockData={fetchStockData} 
                   updateNetWorth={fetchNetWorth} 
-                  capital={capital} 
+                  capital={capital}
+                  fetchUserStockData={fetchUserStockData}
                 />
 
                 {/* ✅ 자산 현황 패널 (OrderPanel 아래로 이동) */}
@@ -165,6 +208,9 @@ const TradePage = () => {
           </aside>
         </div>
       </main>
+      <MyStocks gameId={gameId} fetchUserStockData={fetchUserStockData} userHoldings={userHoldings} />
+      <div className="mb-11"></div>
+
 
       <RollingInfo />
     </div>

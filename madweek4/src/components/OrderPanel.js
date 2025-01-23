@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 function getCookie(name) {
   var cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -15,7 +16,7 @@ function getCookie(name) {
   return cookieValue;
 }
 
-const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital }) => {
+const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital, fetchUserStockData }) => {
   console.log("OrderPanel received gameId:", gameId);
   console.log("OrderPanel received stock:", stock);
   console.log("OrderPanel received gameId:", gameId);
@@ -32,6 +33,8 @@ const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital })
   const balance = capital ?? 0; // 예수금 (1억 원)
   const effectivePrice = orderType === "시장가" ? stock?.data?.[0]?.close_price : price;
   const maxBuyQuantity = effectivePrice ? Math.floor(balance / effectivePrice) : 0;
+
+  
 
   useEffect(() => {
     if (orderType === "시장가") {
@@ -117,6 +120,10 @@ const OrderPanel = ({ stock, gameId, updateStockData, updateNetWorth, capital })
 
       if (typeof updateNetWorth === "function") {
         await updateNetWorth(); // ✅ 최신 자산 데이터 업데이트
+      }
+      if (typeof fetchUserStockData === "function") {
+        console.log("🔄 fetchUserStockData 실행");
+        await fetchUserStockData();
       }
 
     } catch (error) {

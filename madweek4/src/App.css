@@ -1,0 +1,65 @@
+.container {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  margin: 20px 0;
+}
+
+.start-button {
+  background-color: black;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.news-section {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.news-item {
+  width: 200px;
+  text-align: center;
+}
+
+.news-item img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.stock-table {
+  margin-top: 20px;
+}
+
+.stock-table table {
+  width: 80%;
+  margin: auto;
+  border-collapse: collapse;
+}
+
+.stock-table th, .stock-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.up {
+  color: red;
+}
+
+.down {
+  color: blue;
+}
+
+.pagination {
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 5px;
+  padding: 5px 10px;
+}

@@ -44,10 +44,10 @@ const GameResultsPage = () => {
               <span>게임 이름: {game.game_name}</span>
               <span
                   className={`font-bold ${
-                      game.ai_profit_rate >= 0 ? "text-red-500" : "text-blue-500"
+                      game.profit_rate >= 0 ? "text-red-500" : "text-blue-500"
                   }`}
               >
-                ({game.ai_profit_rate >= 0 ? "+" : ""}{parseFloat(game.profit_rate).toFixed(2)}%)
+                ({game.profit_rate >= 0 ? "+" : ""}{parseFloat(game.profit_rate).toFixed(2)}%)
               </span>
               <span className="text-sm text-gray-400">
                 (시작일: {new Date(game.game_start_data).toLocaleDateString()})
